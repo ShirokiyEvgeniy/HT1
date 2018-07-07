@@ -28,12 +28,7 @@ public class ManagePersonServlet extends HttpServlet {
         try
 		{
 			this.phonebook = Phonebook.getInstance();
-		}
-		catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (SQLException e)
+		} catch (SQLException e)
 		{
 			e.printStackTrace();
 		}        
