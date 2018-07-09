@@ -14,8 +14,8 @@
 
 <%
     // Phonebook phonebook = Phonebook.getInstance();
-	String user_message = "";
-	HashMap<String,String> jsp_parameters = new HashMap<String,String>();
+	String user_message;
+	HashMap<String,String> jsp_parameters = new HashMap<>();
 	Phonebook phonebook = (Phonebook)request.getAttribute("phonebook");
 	
 	if (request.getAttribute("jsp_parameters") != null)
