@@ -47,8 +47,7 @@ public class DBWorker {
 			DriverManager.registerDriver(driver);
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/phonebook?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "zheka1998");
 			statement = connect.createStatement();
-			ResultSet resultSet = statement.executeQuery(query);
-			return resultSet;
+			return statement.executeQuery(query);
 		}
 		catch (SQLException e)
 		{

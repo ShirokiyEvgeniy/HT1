@@ -67,6 +67,8 @@ public class ManagePersonServlet extends HttpServlet {
 		// Диспетчеры для передачи управления на разные JSP (разные представления (view)).
 		RequestDispatcher dispatcher_for_manager = request.getRequestDispatcher("/ManagePerson.jsp");
 		RequestDispatcher dispatcher_for_list = request.getRequestDispatcher("/List.jsp");
+		RequestDispatcher dispatcher_for_edit = request.getRequestDispatcher("/EditPerson.jsp");
+		RequestDispatcher dispatcher_for_edit_phone = request.getRequestDispatcher("/EditPhone.jsp");
 
 		// Действие (action) и идентификатор записи (id) над которой выполняется это действие.
 		String action = request.getParameter("action");
@@ -114,7 +116,7 @@ public class ManagePersonServlet extends HttpServlet {
 					request.setAttribute("jsp_parameters", jsp_parameters);
 
 					// Передача запроса в JSP.
-					dispatcher_for_manager.forward(request, response);
+					dispatcher_for_edit.forward(request, response);
 					break;
 
 				// Удаление записи.
@@ -158,6 +160,8 @@ public class ManagePersonServlet extends HttpServlet {
 		// Диспетчеры для передачи управления на разные JSP (разные представления (view)).
 		RequestDispatcher dispatcher_for_manager = request.getRequestDispatcher("/ManagePerson.jsp");
 		RequestDispatcher dispatcher_for_list = request.getRequestDispatcher("/List.jsp");
+		RequestDispatcher dispatcher_for_edit = request.getRequestDispatcher("/EditPerson.jsp");
+		RequestDispatcher dispatcher_for_edit_phone = request.getRequestDispatcher("/EditPhone.jsp");
 
 
 		// Действие (add_go, edit_go) и идентификатор записи (id) над которой выполняется это действие.
@@ -239,7 +243,7 @@ public class ManagePersonServlet extends HttpServlet {
 				request.setAttribute("jsp_parameters", jsp_parameters);
 
 				// Передача запроса в JSP.
-				dispatcher_for_list.forward(request, response);
+				dispatcher_for_edit.forward(request, response);
 			}
 			// Если в данных были ошибки, надо заново показать форму и сообщить об ошибках.
 			else {
@@ -255,7 +259,7 @@ public class ManagePersonServlet extends HttpServlet {
 				request.setAttribute("jsp_parameters", jsp_parameters);
 
 				// Передача запроса в JSP.
-				dispatcher_for_manager.forward(request, response);
+				dispatcher_for_edit.forward(request, response);
 
 			}
 		}

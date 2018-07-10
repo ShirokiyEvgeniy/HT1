@@ -16,8 +16,19 @@ public class Person {
 	private String name;
 	private String surname;
 	private String middlename;
-	private ArrayList<String> phones = new ArrayList<>();
+	private HashMap<String, Phone> phones = new HashMap<>();
 
+	// Указатель на экземпляр класса.
+	private static Person instance = null;
+
+	// Метод для получения экземпляра класса (реализован Singleton).
+	public static Person getInstance() throws SQLException {
+		if (instance == null) {
+			instance = new Person();
+		}
+
+		return instance;
+	}
 	// Конструктор для создания записи о человеке на основе данных из БД. 
 	public Person(String id, String name, String surname, String middlename) {
 		this.id = id;
@@ -32,7 +43,7 @@ public class Person {
 			// Если у человека нет телефонов, ResultSet будет == null.
 			if (db_data != null) {
 				while (db_data.next()) {
-					this.phones.add(db_data.getString("number"));
+					this.phones.put(db_data.getString("id"), new Phone(db_data.getString("id"), id, db_data.getString("number")));
 				}
 			}
 		} catch (SQLException e) {
@@ -93,7 +104,7 @@ public class Person {
 		}
 	}
 
-	public ArrayList<String> getPhones() {
+	public HashMap<String, Phone> getPhones() {
 		return this.phones;
 	}
 
@@ -113,7 +124,7 @@ public class Person {
 		this.middlename = middlename;
 	}
 
-	public void setPhones(ArrayList<String> phones) {
+	public void setPhones(HashMap<String, Phone> phones) {
 		this.phones = phones;
 	}
 	// Геттеры и сеттеры

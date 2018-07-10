@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import util.DBWorker;
@@ -45,11 +46,6 @@ public class Phonebook {
 			query = new StringBuilder("INSERT INTO `person` (`name`, `surname`, `middlename`) VALUES ('" + person.getName() + "', '" + person.getSurname() + "', '" + person.getMiddlename() + "')");
 		} else {
 			query = new StringBuilder("INSERT INTO `person` (`name`, `surname`) VALUES ('" + person.getName() + "', '" + person.getSurname() + "')");
-		}
-
-		ArrayList<String> numbers = person.getPhones();
-		for (String s : numbers) {
-			query.append("\nINSERT INTO 'phone' ('owner', 'number') VALUES ('").append(this.db.getLastInsertId()).append("', '").append(s).append("')");
 		}
 
 		Integer affected_rows = this.db.changeDBData(query.toString());
