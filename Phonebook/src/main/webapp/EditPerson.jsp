@@ -65,13 +65,13 @@
              for(Phone phone : person.getPhones().values())
              {
                  out.write(phone.getNumber() + "\n");%>&nbsp;
-            <a href="<%=request.getContextPath()%>/?action=editPhone&id=<%=phone.getId()%>">Редактировать</a>&nbsp;
-            <a href="<%=request.getContextPath()%>/?action=deletePhone&id=<%=phone.getId()%>">Удалить</a>
+            <a href="<%=request.getContextPath()%>/EditPhone/?action=editPhone&id=<%=phone.getId()%>">Редактировать</a>&nbsp;
+            <a href="<%=request.getContextPath()%>/EditPhone/?action=deletePhone&id=<%=phone.getId()%>">Удалить</a>
 
             <br /> <%
              }
          %>
-            <a href="<%=request.getContextPath()%>/?action=addPhone">Добавить</a>
+            <a href="<%=request.getContextPath()%>/EditPhone/?action=addPhone">Добавить</a>
         </td>
     </tr>
     <tr>

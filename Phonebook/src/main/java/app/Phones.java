@@ -31,7 +31,7 @@ public class Phones {
 
     // При создании экземпляра класса из БД извлекаются все записи.
     protected Phones() throws SQLException {
-        ResultSet db_data = this.db.getDBData("SELECT * FROM `phone` ORDER BY `surname` ASC");
+        ResultSet db_data = this.db.getDBData("SELECT * FROM `phone` ORDER BY `id`");
         while (db_data.next()) {
             this.phones.put(db_data.getString("id"), new Phone(db_data.getString("id"), db_data.getString("owner"), db_data.getString("number")));
         }
@@ -63,7 +63,7 @@ public class Phones {
 
 
     // Обновление записи о человеке.
-    public boolean updatePerson(String id, Phone phone) {
+    public boolean updatePhone(String id, Phone phone) {
 
         Integer id_filtered = Integer.parseInt(phone.getId());
         String query;
@@ -84,7 +84,7 @@ public class Phones {
 
 
     // Удаление записи о человеке.
-    public boolean deletePerson(String id) {
+    public boolean deletePhone(String id) {
         if ((id != null) && (!id.equals("null"))) {
             int filtered_id = Integer.parseInt(id);
 

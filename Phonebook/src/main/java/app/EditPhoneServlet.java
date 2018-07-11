@@ -59,11 +59,27 @@ public class EditPhoneServlet extends HttpServlet {
         // "просто показать список и больше ничего не делать".
         if ((action == null) && (id == null)) {
             request.setAttribute("jsp_parameters", jsp_parameters);
-            dispatcher_for_list.forward(request, response);
+            dispatcher_for_edit.forward(request, response);
         }
         // Если же действие указано, то...
         else {
             switch (action) {
+                case "addPhone" :
+                    // Создание новой пустой записи о пользователе.
+                    Phone empty_phone = new Phone();
+
+                    // Подготовка параметров для JSP.
+                    jsp_parameters.put("current_action", "addPhone");
+                    jsp_parameters.put("next_action", "addPhone_go");
+                    jsp_parameters.put("next_action_label", "Добавить");
+
+                    // Установка параметров JSP.
+                    request.setAttribute("phone", empty_phone);
+                    request.setAttribute("jsp_parameters", jsp_parameters);
+
+                    // Передача запроса в JSP.
+                    dispatcher_for_edit_phone.forward(request, response);
+                    break;
                 case "editPhone":
                     // Извлечение из телефонной книги информации о редактируемой записи.
                     Phone editable_phone = this.phones.getPhone(id);
@@ -85,7 +101,7 @@ public class EditPhoneServlet extends HttpServlet {
                 case "deletePhone":
 
                     // Если запись удалось удалить...
-                    if (phones.deletePerson(id)) {
+                    if (phones.deletePhone(id)) {
                         jsp_parameters.put("current_action_result", "DELETION_SUCCESS");
                         jsp_parameters.put("current_action_result_label", "Удаление выполнено успешно");
                     }
@@ -99,7 +115,7 @@ public class EditPhoneServlet extends HttpServlet {
                     request.setAttribute("jsp_parameters", jsp_parameters);
 
                     // Передача запроса в JSP.
-                    dispatcher_for_edit_phone.forward(request, response);
+                    dispatcher_for_edit.forward(request, response);
                     break;
             }
         }
@@ -107,7 +123,7 @@ public class EditPhoneServlet extends HttpServlet {
     }
 
     // Реакция на POST-запросы.
-    /*protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Обязательно ДО обращения к любому параметру нужно переключиться в UTF-8,
         // иначе русский язык при передаче GET/POST-параметрами превращается в "кракозябры".
         request.setCharacterEncoding("UTF-8");
@@ -127,23 +143,23 @@ public class EditPhoneServlet extends HttpServlet {
 
 
         // Действие (add_go, edit_go) и идентификатор записи (id) над которой выполняется это действие.
-        String add_go = request.getParameter("add_go");
-        String edit_go = request.getParameter("edit_go");
+        String addPhone_go = request.getParameter("addPhone_go");
+        String editPhone_go = request.getParameter("editPhone_go");
         String id = request.getParameter("id");
 
         // Добавление записи.
-        if (add_go != null) {
+        if (addPhone_go != null) {
             // Создание записи на основе данных из формы.
-            Person new_person = new Person(request.getParameter("name"), request.getParameter("surname"), request.getParameter("middlename"));
+            Phone new_phone = new Phone(request.getParameter("id"), request.getParameter("owner"), request.getParameter("number"));
 
             // Валидация ФИО.
-            String error_message = this.validatePersonFMLName(new_person);
+            String error_message = ""; //= this.validatePersonFMLName(new_person);
 
             // Если данные верные, можно производить добавление.
             if (error_message.equals("")) {
 
                 // Если запись удалось добавить...
-                if (this.phonebook.addPerson(new_person)) {
+                if (this.phones.addPhone(new_phone)) {
                     jsp_parameters.put("current_action_result", "ADDITION_SUCCESS");
                     jsp_parameters.put("current_action_result_label", "Добавление выполнено успешно");
                 }
@@ -157,41 +173,41 @@ public class EditPhoneServlet extends HttpServlet {
                 request.setAttribute("jsp_parameters", jsp_parameters);
 
                 // Передача запроса в JSP.
-                dispatcher_for_list.forward(request, response);
+                dispatcher_for_edit.forward(request, response);
             }
             // Если в данных были ошибки, надо заново показать форму и сообщить об ошибках.
             else {
                 // Подготовка параметров для JSP.
-                jsp_parameters.put("current_action", "add");
-                jsp_parameters.put("next_action", "add_go");
+                jsp_parameters.put("current_action", "addPhone");
+                jsp_parameters.put("next_action", "addPhone_go");
                 jsp_parameters.put("next_action_label", "Добавить");
                 jsp_parameters.put("error_message", error_message);
 
                 // Установка параметров JSP.
-                request.setAttribute("person", new_person);
+                request.setAttribute("phone", new_phone);
                 request.setAttribute("jsp_parameters", jsp_parameters);
 
                 // Передача запроса в JSP.
-                dispatcher_for_manager.forward(request, response);
+                dispatcher_for_edit_phone.forward(request, response);
             }
         }
 
         // Редактирование записи.
-        if (edit_go != null) {
+        if (editPhone_go != null) {
             // Получение записи и её обновление на основе данных из формы.
-            Person updatable_person = this.phonebook.getPerson(request.getParameter("id"));
-            updatable_person.setName(request.getParameter("name"));
-            updatable_person.setSurname(request.getParameter("surname"));
-            updatable_person.setMiddlename(request.getParameter("middlename"));
+            Phone updatable_phone = this.phones.getPhone(request.getParameter("id"));
+            updatable_phone.setId(request.getParameter("id"));
+            updatable_phone.setOwner(request.getParameter("owner"));
+            updatable_phone.setNumber(request.getParameter("number"));
 
             // Валидация ФИО.
-            String error_message = this.validatePersonFMLName(updatable_person);
+            String error_message = ""; //this.validatePersonFMLName(updatable_person);
 
             // Если данные верные, можно производить добавление.
             if (error_message.equals("")) {
 
                 // Если запись удалось обновить...
-                if (this.phonebook.updatePerson(id, updatable_person)) {
+                if (this.phones.updatePhone(id, updatable_phone)) {
                     jsp_parameters.put("current_action_result", "UPDATE_SUCCESS");
                     jsp_parameters.put("current_action_result_label", "Обновление выполнено успешно");
                 }
@@ -205,19 +221,19 @@ public class EditPhoneServlet extends HttpServlet {
                 request.setAttribute("jsp_parameters", jsp_parameters);
 
                 // Передача запроса в JSP.
-                dispatcher_for_edit.forward(request, response);
+                dispatcher_for_edit_phone.forward(request, response);
             }
             // Если в данных были ошибки, надо заново показать форму и сообщить об ошибках.
             else {
 
                 // Подготовка параметров для JSP.
-                jsp_parameters.put("current_action", "edit");
-                jsp_parameters.put("next_action", "edit_go");
+                jsp_parameters.put("current_action", "editPhone");
+                jsp_parameters.put("next_action", "editPhone_go");
                 jsp_parameters.put("next_action_label", "Сохранить");
                 jsp_parameters.put("error_message", error_message);
 
                 // Установка параметров JSP.
-                request.setAttribute("person", updatable_person);
+                request.setAttribute("phone", updatable_phone);
                 request.setAttribute("jsp_parameters", jsp_parameters);
 
                 // Передача запроса в JSP.
@@ -225,5 +241,5 @@ public class EditPhoneServlet extends HttpServlet {
 
             }
         }
-    }*/
+    }
 }

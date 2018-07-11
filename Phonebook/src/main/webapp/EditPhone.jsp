@@ -51,7 +51,7 @@
         <td colspan="2" align="center">Информация о телефоне владельца: <%=person.getSurname()%> <%=person.getName()%> <%=person.getMiddlename()%></td>
     </tr>
     <tr>
-        <td>Телефоны:</td>
+        <td>Телефон:</td>
         <td>
          <%out.write(phone.getNumber() + "\n");%><br />
         </td>

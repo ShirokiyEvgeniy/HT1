@@ -10,9 +10,19 @@
 	<servlet-class>app.ManagePersonServlet</servlet-class>
   </servlet>
 
+  <servlet>
+      <servlet-name>EditPhoneServlet</servlet-name>
+      <servlet-class>app.EditPhoneServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>ManagePersonServlet</servlet-name>
     <url-pattern>/ManagePerson/</url-pattern>
     <url-pattern>/</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+       <servlet-name>EditPhoneServlet</servlet-name>
+       <url-pattern>/EditPhone/</url-pattern>
    </servlet-mapping>
 </web-app>
