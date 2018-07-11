@@ -39,7 +39,6 @@ public class Phones {
 
     // Добавление записи о человеке.
     public String addPhone(Phone phone) {
-        ResultSet db_result;
         String query;
         // У человека может не быть отчества.
 

@@ -39,7 +39,6 @@ public class Phonebook {
 
 	// Добавление записи о человеке.
 	public boolean addPerson(Person person) {
-		ResultSet db_result;
 		StringBuilder query;
 		// У человека может не быть отчества.
 		if (!person.getMiddlename().equals("")) {

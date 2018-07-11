@@ -20,7 +20,7 @@
     <title>Список людей</title>
     <link rel="stylesheet" type="text/css">
 </head>
-<body link="black" alink="black" vlink="black" background="resources/background.jpg">
+<body link="black" alink="black" vlink="black" background="/resources/background.jpg">
 
 <%
     // Phonebook phonebook = Phonebook.getInstance();
