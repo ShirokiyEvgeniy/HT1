@@ -3,7 +3,6 @@ package app;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,13 +18,14 @@ public class ManagePersonServlet extends HttpServlet {
 
 	// Основной объект, хранящий данные телефонной книги.
 	private Phonebook phonebook;
+	// Основной объект, хранящий все телефоны.
     private Phones phones;
 
 	public ManagePersonServlet() {
 		// Вызов родительского конструктора.
 		super();
 
-		// Создание экземпляра телефонной книги.
+		// Создание экземпляра телефонной книги и телефонов.
 		try {
 			this.phonebook = Phonebook.getInstance();
 			this.phones = Phones.getInstance();

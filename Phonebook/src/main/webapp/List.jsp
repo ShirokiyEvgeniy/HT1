@@ -7,11 +7,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+
+<style>
+    TABLE.a {
+        border-collapse: collapse;
+        padding: 5px; /* Поля вокруг содержимого таблицы */
+        border: 1px solid black; /* Параметры рамки */
+    }
+</style>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Список людей</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Список людей</title>
+    <link rel="stylesheet" type="text/css">
 </head>
-<body>
+<body link="black" alink="black" vlink="black" background="resources/background.jpg">
 
 <%
     // Phonebook phonebook = Phonebook.getInstance();
@@ -27,7 +36,7 @@
 	user_message = jsp_parameters.get("current_action_result_label");
 %>
 
-<table align="center" border="1" width="90%">
+<table align="center" border="1" width="90%" bgcolor="#d3d3d3" cellpadding="6" class="a">
     
     <%
     if ((user_message != null)&&(!user_message.equals("")))

@@ -12,7 +12,6 @@
 
   <servlet-mapping>
     <servlet-name>ManagePersonServlet</servlet-name>
-    <url-pattern>/ManagePerson/</url-pattern>
     <url-pattern>/</url-pattern>
    </servlet-mapping>
 
