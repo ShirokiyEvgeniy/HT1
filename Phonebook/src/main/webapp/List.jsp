@@ -70,8 +70,8 @@
               }
             %>
            </td>
-           <td><a href="<%=request.getContextPath()%>/ManagePerson/?action=edit&id=<%=person.getId()%>">Редактировать</a></td>
-           <td><a href="<%=request.getContextPath()%>/ManagePerson/?action=delete&id=<%=person.getId()%>">Удалить</a></td>
+           <td><a href="<%=request.getContextPath()%>/?action=edit&id=<%=person.getId()%>">Редактировать</a></td>
+           <td><a href="<%=request.getContextPath()%>/?action=delete&id=<%=person.getId()%>">Удалить</a></td>
           </tr>
         <%
           }

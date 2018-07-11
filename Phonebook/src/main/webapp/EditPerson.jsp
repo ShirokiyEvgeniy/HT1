@@ -26,7 +26,7 @@
 	{
 		person=(Person)request.getAttribute("person");
 	}
-	
+
 	error_message = jsp_parameters.get("error_message");
 %>
 
@@ -65,13 +65,13 @@
              for(Phone phone : person.getPhones().values())
              {
                  out.write(phone.getNumber() + "\n");%>&nbsp;
-            <a href="<%=request.getContextPath()%>/EditPhone/?action=editPhone&id=<%=phone.getId()%>">Редактировать</a>&nbsp;
-            <a href="<%=request.getContextPath()%>/EditPhone/?action=deletePhone&id=<%=phone.getId()%>">Удалить</a>
+            <a href="<%=request.getContextPath()%>/?action=editPhone&id=<%=phone.getId()%>&ownerID=<%=person.getId()%>">Редактировать</a>&nbsp;
+            <a href="<%=request.getContextPath()%>/?action=deletePhone&id=<%=phone.getId()%>&ownerID=<%=person.getId()%>">Удалить</a>
 
             <br /> <%
              }
          %>
-            <a href="<%=request.getContextPath()%>/EditPhone/?action=addPhone">Добавить</a>
+            <a href="<%=request.getContextPath()%>/?action=addPhone&ownerID=<%=person.getId()%>">Добавить</a>
         </td>
     </tr>
     <tr>

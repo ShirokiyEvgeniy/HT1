@@ -38,15 +38,15 @@ public class Phones {
     }
 
     // Добавление записи о человеке.
-    public boolean addPhone(Phone phone) {
+    public String addPhone(Phone phone) {
         ResultSet db_result;
-        StringBuilder query;
+        String query;
         // У человека может не быть отчества.
 
-        query = new StringBuilder("INSERT INTO `phone` (`owner`, `number`) VALUES ('" + phone.getOwner() + "', '" + phone.getNumber() + "')");
+        query = "INSERT INTO `phone` (`owner`, `number`) VALUES ('" + phone.getOwner() + "', '" + phone.getNumber() + "')";
 
 
-        Integer affected_rows = this.db.changeDBData(query.toString());
+        Integer affected_rows = this.db.changeDBData(query);
 
         // Если добавление прошло успешно...
         if (affected_rows > 0) {
@@ -55,9 +55,9 @@ public class Phones {
             // Добавляем запись о человеке в общий список.
             this.phones.put(phone.getId(), phone);
 
-            return true;
+            return phone.getId();
         } else {
-            return false;
+            return "0";
         }
     }
 

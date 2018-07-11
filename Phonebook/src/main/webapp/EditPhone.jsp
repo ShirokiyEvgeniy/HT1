@@ -29,13 +29,14 @@
 	}
 
     Phonebook phonebook = Phonebook.getInstance();
-    Person person = phonebook.getPerson(phone.getOwner());
+    Person person = (Person)request.getAttribute("person");
 	
 	error_message = jsp_parameters.get("error_message");
 %>
 
 <form action="<%=request.getContextPath()%>/" method="post">
 <input type="hidden" name="id" value="<%=phone.getId()%>"/>
+<input type="hidden" name="ownerID" value="<%=person.getId()%>"/>
 <table align="center" border="1" width="70%">
     <%
     if ((error_message != null)&&(!error_message.equals("")))
@@ -52,8 +53,9 @@
     </tr>
     <tr>
         <td>Телефон:</td>
-        <td>
-         <%out.write(phone.getNumber() + "\n");%><br />
+        <td><input type="text" name="number" value="<%
+                 out.write(phone.getNumber());
+         %>"/>
         </td>
     </tr>
     <tr>
