@@ -37,13 +37,13 @@ public class Person {
 		this.middlename = middlename;
 
 		// Извлечение телефонов человека из БД.
-		ResultSet db_data = DBWorker.getInstance().getDBData("SELECT * FROM `phone` WHERE `owner`=" + id);
+		ResultSet dbData = DBWorker.getInstance().getDBData("SELECT * FROM `phone` WHERE `owner`=" + id);
 
 		try {
 			// Если у человека нет телефонов, ResultSet будет == null.
-			if (db_data != null) {
-				while (db_data.next()) {
-					this.phones.put(db_data.getString("id"), new Phone(db_data.getString("id"), id, db_data.getString("number")));
+			if (dbData != null) {
+				while (dbData.next()) {
+					this.phones.put(dbData.getString("id"), new Phone(dbData.getString("id"), id, dbData.getString("number")));
 				}
 			}
 		} catch (SQLException e) {
@@ -69,15 +69,11 @@ public class Person {
 
 	// Валидация частей ФИО. Для отчества можно передать второй параетр == true,
 	// тогда допускается пустое значение.
-	public boolean validateFMLNamePart(String fml_name_part, boolean empty_allowed) {
-		if (empty_allowed) {
-			//Matcher matcher = Pattern.compile("[\\w-]{0,150}").matcher(fml_name_part);
-			//return matcher.matches();
-			return fml_name_part.matches("[a-zA-Zа-яА-Я_0-9\\-]{0,150}");
+	public boolean validateFMLNamePart(String fmlNamePart, boolean emptyAllowed) {
+		if (emptyAllowed) {
+			return fmlNamePart.matches("[a-zA-Zа-яА-Я_0-9\\-]{0,150}");
 		} else {
-			//Matcher matcher = Pattern.compile("[\\w-]{1,150}").matcher(fml_name_part);
-			//return matcher.matches();
-			return fml_name_part.matches("[a-zA-Zа-яА-Я_0-9\\-]{1,150}");
+			return fmlNamePart.matches("[a-zA-Zа-яА-Я_0-9\\-]{1,150}");
 		}
 
 	}

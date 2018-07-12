@@ -5,16 +5,18 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ResourceBundle;
+
 import com.mysql.cj.jdbc.Driver;
 
 public class DBWorker {
 	
 	// Количество рядов таблицы, затронутых последним запросом.
-	private Integer affected_rows = 0;
+	private Integer affectedRows = 0;
 	
 	// Значение автоинкрементируемого первичного ключа, полученное после
 	// добавления новой записи.
-	private Integer last_insert_id = 0;
+	private Integer lastInsertId = 0;
 
 	// Указатель на экземпляр класса.
 	private static DBWorker instance = null;
@@ -41,20 +43,21 @@ public class DBWorker {
 	{
 		Statement statement;
 		Connection connect;
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("DBLogin");
 		try
 		{
 			Driver driver = new Driver();
 			DriverManager.registerDriver(driver);
-			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/phonebook?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "zheka1998");
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/phonebook?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", resourceBundle.getString("login"), resourceBundle.getString("password"));
 			statement = connect.createStatement();
 			return statement.executeQuery(query);
 		}
-		catch (SQLException e)
+		catch (SQLException  e )
 		{
 			e.printStackTrace();
 		}
-		
-		System.out.println("null on getDBData()!");
+
+        System.out.println("null on getDBData()!");
 		return null;
 
 	}
@@ -64,21 +67,22 @@ public class DBWorker {
 	{
 		Statement statement;
 		Connection connect;
+		ResourceBundle resourceBundle = ResourceBundle.getBundle("DBLogin");
 		try
 		{
             Driver driver = new Driver();
             DriverManager.registerDriver(driver);
-            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/phonebook?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "zheka1998");
+            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/phonebook?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", resourceBundle.getString("login"), resourceBundle.getString("password"));
             statement = connect.createStatement();
-			this.affected_rows = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+			this.affectedRows = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
 
-			// Получаем last_insert_id() для операции вставки.
+			// Получаем lastInsertId() для операции вставки.
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next()){
-            	this.last_insert_id = rs.getInt(1);
+            	this.lastInsertId = rs.getInt(1);
             }
 
-			return this.affected_rows;
+			return this.affectedRows;
 		}
 		catch (SQLException e)
 		{
@@ -93,12 +97,12 @@ public class DBWorker {
 	// Геттеры и сеттеры.
 	public Integer getAffectedRowsCount()
 	{
-		return this.affected_rows;
+		return this.affectedRows;
 	}
 	
 	public Integer getLastInsertId()
 	{
-		return this.last_insert_id;
+		return this.lastInsertId;
 	}
 	// Геттеры и сеттеры.
 	// -------------------------------------------------

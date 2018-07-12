@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 public class ManagePersonServlet extends HttpServlet {
 
     // Идентификатор для сериализации/десериализации.
@@ -61,22 +60,32 @@ public class ManagePersonServlet extends HttpServlet {
 
 	// Валидация ФИО и генерация сообщения об ошибке в случае невалидных данных.
 	private String validatePersonFMLName(Person person) {
-		String error_message = "";
+		String errorMessage = "";
 
 		if (!person.validateFMLNamePart(person.getName(), false)) {
-			error_message += "Имя должно быть строкой от 1 до 150 символов из букв, цифр, знаков подчёркивания и знаков минус.<br />";
+			errorMessage += "Имя должно быть строкой от 1 до 150 символов из букв, цифр, знаков подчёркивания и знаков минус.<br />";
 		}
 
 		if (!person.validateFMLNamePart(person.getSurname(), false)) {
-			error_message += "Фамилия должна быть строкой от 1 до 150 символов из букв, цифр, знаков подчёркивания и знаков минус.<br />";
+			errorMessage += "Фамилия должна быть строкой от 1 до 150 символов из букв, цифр, знаков подчёркивания и знаков минус.<br />";
 		}
 
 		if (!person.validateFMLNamePart(person.getMiddlename(), true)) {
-			error_message += "Отчество должно быть строкой от 0 до 150 символов из букв, цифр, знаков подчёркивания и знаков минус.<br />";
+			errorMessage += "Отчество должно быть строкой от 0 до 150 символов из букв, цифр, знаков подчёркивания и знаков минус.<br />";
 		}
 
-		return error_message;
+		return errorMessage;
 	}
+
+	private String validatePhone(Phone phone) {
+	    String errorMessage = "";
+
+	    if (!phone.validateNumber(phone.getNumber())) {
+	        errorMessage += "Требования к телефонному номеру: от 2 до 50 символов: цифра, +, -, #.";
+        }
+
+        return errorMessage;
+    }
 
 	// Реакция на GET-запросы.
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -90,13 +99,13 @@ public class ManagePersonServlet extends HttpServlet {
         request.setAttribute("phones", this.phones);
 
 		// Хранилище параметров для передачи в JSP.
-		HashMap<String, String> jsp_parameters = new HashMap<>();
+		HashMap<String, String> jspParameters = new HashMap<>();
 
 		// Диспетчеры для передачи управления на разные JSP (разные представления (view)).
-		RequestDispatcher dispatcher_for_manager = request.getRequestDispatcher(MANAGE_PERSON_JSP);
-		RequestDispatcher dispatcher_for_list = request.getRequestDispatcher(LIST_JSP);
-		RequestDispatcher dispatcher_for_edit = request.getRequestDispatcher(EDIT_PERSON_JSP);
-		RequestDispatcher dispatcher_for_edit_phone = request.getRequestDispatcher(EDIT_PHONE_JSP);
+		RequestDispatcher dispatcherForManager = request.getRequestDispatcher(MANAGE_PERSON_JSP);
+		RequestDispatcher dispatcherForList = request.getRequestDispatcher(LIST_JSP);
+		RequestDispatcher dispatcherForEdit = request.getRequestDispatcher(EDIT_PERSON_JSP);
+		RequestDispatcher dispatcherForEditPhone = request.getRequestDispatcher(EDIT_PHONE_JSP);
 
 		// Действие (action) и идентификатор записи (id) над которой выполняется это действие.
 		String action = request.getParameter(ACTION);
@@ -106,8 +115,8 @@ public class ManagePersonServlet extends HttpServlet {
 		// Если идентификатор и действие не указаны, мы находимся в состоянии
 		// "просто показать список и больше ничего не делать".
 		if ((action == null) && (id == null)) {
-			request.setAttribute(JSP_PARAMETERS, jsp_parameters);
-			dispatcher_for_list.forward(request, response);
+			request.setAttribute(JSP_PARAMETERS, jspParameters);
+			dispatcherForList.forward(request, response);
 		}
 		// Если же действие указано, то...
 		else {
@@ -115,37 +124,37 @@ public class ManagePersonServlet extends HttpServlet {
 				// Добавление записи.
 				case ADD_PERSON:
 					// Создание новой пустой записи о пользователе.
-					Person empty_person = new Person();
+					Person emptyPerson = new Person();
 
 					// Подготовка параметров для JSP.
-					jsp_parameters.put(CURRENT_ACTION, ADD_PERSON);
-					jsp_parameters.put(NEXT_ACTION, ADD_GO_PERSON);
-					jsp_parameters.put(NEXT_ACTION_LABEL, "Добавить");
+					jspParameters.put(CURRENT_ACTION, ADD_PERSON);
+					jspParameters.put(NEXT_ACTION, ADD_GO_PERSON);
+					jspParameters.put(NEXT_ACTION_LABEL, "Добавить");
 
 					// Установка параметров JSP.
-					request.setAttribute("person", empty_person);
-					request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+					request.setAttribute("person", emptyPerson);
+					request.setAttribute(JSP_PARAMETERS, jspParameters);
 
 					// Передача запроса в JSP.
-					dispatcher_for_manager.forward(request, response);
+					dispatcherForManager.forward(request, response);
 					break;
 
 				// Редактирование записи.
 				case EDIT_PERSON:
 					// Извлечение из телефонной книги информации о редактируемой записи.
-					Person editable_person = this.phonebook.getPerson(id);
+					Person editablePerson = this.phonebook.getPerson(id);
 
 					// Подготовка параметров для JSP.
-					jsp_parameters.put(CURRENT_ACTION, EDIT_PERSON);
-					jsp_parameters.put(NEXT_ACTION, EDIT_GO_PERSON);
-					jsp_parameters.put(NEXT_ACTION_LABEL, "Сохранить");
+					jspParameters.put(CURRENT_ACTION, EDIT_PERSON);
+					jspParameters.put(NEXT_ACTION, EDIT_GO_PERSON);
+					jspParameters.put(NEXT_ACTION_LABEL, "Сохранить");
 
 					// Установка параметров JSP.
-					request.setAttribute("person", editable_person);
-					request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+					request.setAttribute("person", editablePerson);
+					request.setAttribute(JSP_PARAMETERS, jspParameters);
 
 					// Передача запроса в JSP.
-					dispatcher_for_edit.forward(request, response);
+					dispatcherForEdit.forward(request, response);
 					break;
 
 				// Удаление записи.
@@ -153,56 +162,56 @@ public class ManagePersonServlet extends HttpServlet {
 
 					// Если запись удалось удалить...
 					if (phonebook.deletePerson(id)) {
-						jsp_parameters.put(CURRENT_ACTION_RESULT, "DELETION_SUCCESS");
-						jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Удаление выполнено успешно");
+						jspParameters.put(CURRENT_ACTION_RESULT, "DELETION_SUCCESS");
+						jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Удаление выполнено успешно");
 					}
 					// Если запись не удалось удалить (например, такой записи нет)...
 					else {
-						jsp_parameters.put(CURRENT_ACTION_RESULT, "DELETION_FAILURE");
-						jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка удаления (возможно, запись не найдена)");
+						jspParameters.put(CURRENT_ACTION_RESULT, "DELETION_FAILURE");
+						jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка удаления (возможно, запись не найдена)");
 					}
 
 					// Установка параметров JSP.
-					request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+					request.setAttribute(JSP_PARAMETERS, jspParameters);
 
 					// Передача запроса в JSP.
-					dispatcher_for_list.forward(request, response);
+					dispatcherForList.forward(request, response);
 					break;
                 case ADD_PHONE:
                     // Создание новой пустой записи о пользователе.
-                    Phone empty_phone = new Phone();
-                    Person updated_person = this.phonebook.getPerson(ownerID);
+                    Phone emptyPhone = new Phone();
+                    Person updatedPerson = this.phonebook.getPerson(ownerID);
 
                     // Подготовка параметров для JSP.
-                    jsp_parameters.put(CURRENT_ACTION, ADD_PHONE);
-                    jsp_parameters.put(NEXT_ACTION, ADD__GO_PHONE);
-                    jsp_parameters.put(NEXT_ACTION_LABEL, "Добавить");
+                    jspParameters.put(CURRENT_ACTION, ADD_PHONE);
+                    jspParameters.put(NEXT_ACTION, ADD__GO_PHONE);
+                    jspParameters.put(NEXT_ACTION_LABEL, "Добавить");
 
                     // Установка параметров JSP.
-                    request.setAttribute("phone", empty_phone);
-                    request.setAttribute("person", updated_person);
-                    request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+                    request.setAttribute("phone", emptyPhone);
+                    request.setAttribute("person", updatedPerson);
+                    request.setAttribute(JSP_PARAMETERS, jspParameters);
 
                     // Передача запроса в JSP.
-                    dispatcher_for_edit_phone.forward(request, response);
+                    dispatcherForEditPhone.forward(request, response);
                     break;
                 case EDIT_PHONE:
                     // Извлечение из телефонной книги информации о редактируемой записи.
-                    Phone editable_phone = this.phones.getPhone(id);
-                    Person edited_person = this.phonebook.getPerson(ownerID);
+                    Phone editablePhone = this.phones.getPhone(id);
+                    Person editedPerson = this.phonebook.getPerson(ownerID);
 
                     // Подготовка параметров для JSP.
-                    jsp_parameters.put(CURRENT_ACTION, EDIT_PHONE);
-                    jsp_parameters.put(NEXT_ACTION, EDIT_GO_PHONE);
-                    jsp_parameters.put(NEXT_ACTION_LABEL, "Сохранить");
+                    jspParameters.put(CURRENT_ACTION, EDIT_PHONE);
+                    jspParameters.put(NEXT_ACTION, EDIT_GO_PHONE);
+                    jspParameters.put(NEXT_ACTION_LABEL, "Сохранить");
 
                     // Установка параметров JSP.
-                    request.setAttribute("phone", editable_phone);
-                    request.setAttribute("person", edited_person);
-                    request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+                    request.setAttribute("phone", editablePhone);
+                    request.setAttribute("person", editedPerson);
+                    request.setAttribute(JSP_PARAMETERS, jspParameters);
 
                     // Передача запроса в JSP.
-                    dispatcher_for_edit_phone.forward(request, response);
+                    dispatcherForEditPhone.forward(request, response);
                     break;
 
                 // Удаление записи.
@@ -210,24 +219,24 @@ public class ManagePersonServlet extends HttpServlet {
 
                     // Если запись удалось удалить...
                     if (phones.deletePhone(id)) {
-                        Person person_for_update = phonebook.getPerson(ownerID);
-                        person_for_update.getPhones().remove(id);
-                        this.phonebook.updatePerson(request.getParameter(OWNER_ID), person_for_update);
+                        Person personForUpdate = phonebook.getPerson(ownerID);
+                        personForUpdate.getPhones().remove(id);
+                        this.phonebook.updatePerson(request.getParameter(OWNER_ID), personForUpdate);
 
-                        jsp_parameters.put(CURRENT_ACTION_RESULT, "DELETION_SUCCESS");
-                        jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Удаление выполнено успешно");
+                        jspParameters.put(CURRENT_ACTION_RESULT, "DELETION_SUCCESS");
+                        jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Удаление выполнено успешно");
                     }
                     // Если запись не удалось удалить (например, такой записи нет)...
                     else {
-                        jsp_parameters.put(CURRENT_ACTION_RESULT, "DELETION_FAILURE");
-                        jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка удаления (возможно, телефон не найдена)");
+                        jspParameters.put(CURRENT_ACTION_RESULT, "DELETION_FAILURE");
+                        jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка удаления (возможно, телефон не найдена)");
                     }
 
                     // Установка параметров JSP.
-                    request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+                    request.setAttribute(JSP_PARAMETERS, jspParameters);
 
                     // Передача запроса в JSP.
-                    dispatcher_for_list.forward(request, response);
+                    dispatcherForList.forward(request, response);
                     break;
 			}
 		}
@@ -246,214 +255,217 @@ public class ManagePersonServlet extends HttpServlet {
         request.setAttribute("phones", this.phones);
 
 		// Хранилище параметров для передачи в JSP.
-		HashMap<String, String> jsp_parameters = new HashMap<>();
+		HashMap<String, String> jspParameters = new HashMap<>();
 
 		// Диспетчеры для передачи управления на разные JSP (разные представления (view)).
-		RequestDispatcher dispatcher_for_manager = request.getRequestDispatcher(MANAGE_PERSON_JSP);
-		RequestDispatcher dispatcher_for_list = request.getRequestDispatcher(LIST_JSP);
-		RequestDispatcher dispatcher_for_edit = request.getRequestDispatcher(EDIT_PERSON_JSP);
-		RequestDispatcher dispatcher_for_edit_phone = request.getRequestDispatcher(EDIT_PHONE_JSP);
+		RequestDispatcher dispatcherForManager = request.getRequestDispatcher(MANAGE_PERSON_JSP);
+		RequestDispatcher dispatcherForList = request.getRequestDispatcher(LIST_JSP);
+		RequestDispatcher dispatcherForEdit = request.getRequestDispatcher(EDIT_PERSON_JSP);
+		RequestDispatcher dispatcherForEditPhone = request.getRequestDispatcher(EDIT_PHONE_JSP);
 
 
 		// Действие (add_go, edit_go) и идентификатор записи (id) над которой выполняется это действие.
-		String add_go = request.getParameter(ADD_GO_PERSON);
-		String edit_go = request.getParameter(EDIT_GO_PERSON);
-        String addPhone_go = request.getParameter(ADD__GO_PHONE);
-        String editPhone_go = request.getParameter(EDIT_GO_PHONE);
+		String addGo = request.getParameter(ADD_GO_PERSON);
+		String editGo = request.getParameter(EDIT_GO_PERSON);
+        String addPhoneGo = request.getParameter(ADD__GO_PHONE);
+        String editPhoneGo = request.getParameter(EDIT_GO_PHONE);
         String id = request.getParameter(ID);
 
 		// Добавление записи.
-		if (add_go != null) {
+		if (addGo != null) {
 			// Создание записи на основе данных из формы.
-			Person new_person = new Person(request.getParameter("name"), request.getParameter("surname"), request.getParameter("middlename"));
+			Person newPerson = new Person(request.getParameter("name"), request.getParameter("surname"), request.getParameter("middlename"));
 
 			// Валидация ФИО.
-			String error_message = this.validatePersonFMLName(new_person);
+			String errorMessage = this.validatePersonFMLName(newPerson);
 
 			// Если данные верные, можно производить добавление.
-			if (error_message.equals("")) {
+			if (errorMessage.equals("")) {
 
 				// Если запись удалось добавить...
-				if (this.phonebook.addPerson(new_person)) {
-					jsp_parameters.put(CURRENT_ACTION_RESULT, "ADDITION_SUCCESS");
-					jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Добавление выполнено успешно");
+				if (this.phonebook.addPerson(newPerson)) {
+					jspParameters.put(CURRENT_ACTION_RESULT, "ADDITION_SUCCESS");
+					jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Добавление выполнено успешно");
 				}
 				// Если запись НЕ удалось добавить...
 				else {
-					jsp_parameters.put(CURRENT_ACTION_RESULT, "ADDITION_FAILURE");
-					jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка добавления");
+					jspParameters.put(CURRENT_ACTION_RESULT, "ADDITION_FAILURE");
+					jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка добавления");
 				}
 
 				// Установка параметров JSP.
-				request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+				request.setAttribute(JSP_PARAMETERS, jspParameters);
 
 				// Передача запроса в JSP.
-				dispatcher_for_list.forward(request, response);
+				dispatcherForList.forward(request, response);
 			}
 			// Если в данных были ошибки, надо заново показать форму и сообщить об ошибках.
 			else {
 				// Подготовка параметров для JSP.
-				jsp_parameters.put(CURRENT_ACTION, ADD_PERSON);
-				jsp_parameters.put(NEXT_ACTION, ADD_GO_PERSON);
-				jsp_parameters.put(NEXT_ACTION_LABEL, "Добавить");
-				jsp_parameters.put(ERROR_MESSAGE, error_message);
+				jspParameters.put(CURRENT_ACTION, ADD_PERSON);
+				jspParameters.put(NEXT_ACTION, ADD_GO_PERSON);
+				jspParameters.put(NEXT_ACTION_LABEL, "Добавить");
+				jspParameters.put(ERROR_MESSAGE, errorMessage);
 
 				// Установка параметров JSP.
-				request.setAttribute("person", new_person);
-				request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+				request.setAttribute("person", newPerson);
+				request.setAttribute(JSP_PARAMETERS, jspParameters);
 
 				// Передача запроса в JSP.
-				dispatcher_for_manager.forward(request, response);
+				dispatcherForManager.forward(request, response);
 			}
 		}
 
 		// Редактирование записи.
-		if (edit_go != null) {
+		if (editGo != null) {
 			// Получение записи и её обновление на основе данных из формы.
-			Person updatable_person = this.phonebook.getPerson(request.getParameter(ID));
-			updatable_person.setName(request.getParameter("name"));
-			updatable_person.setSurname(request.getParameter("surname"));
-			updatable_person.setMiddlename(request.getParameter("middlename"));
+			Person updatablePerson = this.phonebook.getPerson(request.getParameter(ID));
 
 			// Валидация ФИО.
-			String error_message = this.validatePersonFMLName(updatable_person);
+			String errorMessage = this.validatePersonFMLName(new Person(request.getParameter("name"), request.getParameter("surname"), request.getParameter("middlename")));
 
 			// Если данные верные, можно производить добавление.
-			if (error_message.equals("")) {
+			if (errorMessage.equals("")) {
+
+                updatablePerson.setName(request.getParameter("name"));
+                updatablePerson.setSurname(request.getParameter("surname"));
+                updatablePerson.setMiddlename(request.getParameter("middlename"));
 
 				// Если запись удалось обновить...
-				if (this.phonebook.updatePerson(id, updatable_person)) {
-					jsp_parameters.put(CURRENT_ACTION_RESULT, "UPDATE_SUCCESS");
-					jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Обновление выполнено успешно");
+				if (this.phonebook.updatePerson(id, updatablePerson)) {
+					jspParameters.put(CURRENT_ACTION_RESULT, "UPDATE_SUCCESS");
+					jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Обновление выполнено успешно");
 				}
 				// Если запись НЕ удалось обновить...
 				else {
-					jsp_parameters.put(CURRENT_ACTION_RESULT, "UPDATE_FAILURE");
-					jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка обновления");
+					jspParameters.put(CURRENT_ACTION_RESULT, "UPDATE_FAILURE");
+					jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка обновления");
 				}
 
 				// Установка параметров JSP.
-				request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+				request.setAttribute(JSP_PARAMETERS, jspParameters);
 
 				// Передача запроса в JSP.
-				dispatcher_for_edit.forward(request, response);
+				dispatcherForEdit.forward(request, response);
 			}
 			// Если в данных были ошибки, надо заново показать форму и сообщить об ошибках.
 			else {
 
 				// Подготовка параметров для JSP.
-				jsp_parameters.put(CURRENT_ACTION, EDIT_PERSON);
-				jsp_parameters.put(NEXT_ACTION, EDIT_GO_PERSON);
-				jsp_parameters.put(NEXT_ACTION_LABEL, "Сохранить");
-				jsp_parameters.put(ERROR_MESSAGE, error_message);
+				jspParameters.put(CURRENT_ACTION, EDIT_PERSON);
+				jspParameters.put(NEXT_ACTION, EDIT_GO_PERSON);
+				jspParameters.put(NEXT_ACTION_LABEL, "Сохранить");
+				jspParameters.put(ERROR_MESSAGE, errorMessage);
 
 				// Установка параметров JSP.
-				request.setAttribute("person", updatable_person);
-				request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+				request.setAttribute("person", updatablePerson);
+				request.setAttribute(JSP_PARAMETERS, jspParameters);
 
 				// Передача запроса в JSP.
-				dispatcher_for_edit.forward(request, response);
+				dispatcherForEdit.forward(request, response);
 
 			}
 		}
-        if (addPhone_go != null) {
+        if (addPhoneGo != null) {
             // Создание записи на основе данных из формы.
-            Phone new_phone = new Phone(request.getParameter(ID), request.getParameter(OWNER_ID), request.getParameter("number"));
-            Person updated_person = this.phonebook.getPerson(request.getParameter(OWNER_ID));
+            Phone newPhone = new Phone(request.getParameter(ID), request.getParameter(OWNER_ID), request.getParameter("number"));
+            Person updatedPerson = this.phonebook.getPerson(request.getParameter(OWNER_ID));
 
             // Валидация ФИО.
-            String error_message = ""; //= this.validatePersonFMLName(new_person);
+            String errorMessage = this.validatePhone(newPhone);
 
             // Если данные верные, можно производить добавление.
-            if (error_message.equals("")) {
-                String new_id;
+            if (errorMessage.equals("")) {
+                String newID;
                 // Если запись удалось добавить...
-                if (!(new_id = this.phones.addPhone(new_phone)).equals("0")) {
-                    updated_person.getPhones().put(new_id, this.phones.getPhone(new_id));
-                    this.phonebook.updatePerson(request.getParameter(OWNER_ID), updated_person);
+                if (!(newID = this.phones.addPhone(newPhone)).equals("0")) {
+                    updatedPerson.getPhones().put(newID, this.phones.getPhone(newID));
+                    this.phonebook.updatePerson(request.getParameter(OWNER_ID), updatedPerson);
 
-                    jsp_parameters.put(CURRENT_ACTION_RESULT, "ADDITION_SUCCESS");
-                    jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Добавление выполнено успешно");
+                    jspParameters.put(CURRENT_ACTION_RESULT, "ADDITION_SUCCESS");
+                    jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Добавление выполнено успешно");
                 }
                 // Если запись НЕ удалось добавить...
                 else {
-                    jsp_parameters.put(CURRENT_ACTION_RESULT, "ADDITION_FAILURE");
-                    jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка добавления");
+                    jspParameters.put(CURRENT_ACTION_RESULT, "ADDITION_FAILURE");
+                    jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка добавления");
                 }
 
                 // Установка параметров JSP.
-                request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+                request.setAttribute(JSP_PARAMETERS, jspParameters);
 
                 // Передача запроса в JSP.
-                dispatcher_for_list.forward(request, response);
+                dispatcherForList.forward(request, response);
             }
             // Если в данных были ошибки, надо заново показать форму и сообщить об ошибках.
             else {
                 // Подготовка параметров для JSP.
-                jsp_parameters.put(CURRENT_ACTION, ADD_PHONE);
-                jsp_parameters.put(NEXT_ACTION, ADD__GO_PHONE);
-                jsp_parameters.put(NEXT_ACTION_LABEL, "Добавить");
-                jsp_parameters.put(ERROR_MESSAGE, error_message);
+                jspParameters.put(CURRENT_ACTION, ADD_PHONE);
+                jspParameters.put(NEXT_ACTION, ADD__GO_PHONE);
+                jspParameters.put(NEXT_ACTION_LABEL, "Добавить");
+                jspParameters.put(ERROR_MESSAGE, errorMessage);
 
                 // Установка параметров JSP.
-                request.setAttribute("phone", new_phone);
-                request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+                request.setAttribute("phone", newPhone);
+                request.setAttribute("person", updatedPerson);
+                request.setAttribute(JSP_PARAMETERS, jspParameters);
 
                 // Передача запроса в JSP.
-                dispatcher_for_edit_phone.forward(request, response);
+                dispatcherForEditPhone.forward(request, response);
             }
         }
 
         // Редактирование записи.
-        if (editPhone_go != null) {
+        if (editPhoneGo != null) {
             // Получение записи и её обновление на основе данных из формы.
-            Phone updatable_phone = this.phones.getPhone(request.getParameter(ID));
-            Person updated_person = this.phonebook.getPerson(request.getParameter(OWNER_ID));
-
-            updatable_phone.setId(request.getParameter(ID));
-            updatable_phone.setOwner(request.getParameter(OWNER_ID));
-            updatable_phone.setNumber(request.getParameter("number"));
+            Phone updatablePhone = this.phones.getPhone(request.getParameter(ID));
+            Person updatedPerson = this.phonebook.getPerson(request.getParameter(OWNER_ID));
 
             // Валидация ФИО.
-            String error_message = ""; //this.validatePersonFMLName(updatable_person);
+            String errorMessage = validatePhone(new Phone("0", "0", request.getParameter("number")));
 
             // Если данные верные, можно производить добавление.
-            if (error_message.equals("")) {
+            if (errorMessage.equals("")) {
+
+                updatablePhone.setId(request.getParameter(ID));
+                updatablePhone.setOwner(request.getParameter(OWNER_ID));
+                updatablePhone.setNumber(request.getParameter("number"));
 
                 // Если запись удалось обновить...
-                if (this.phones.updatePhone(id, updatable_phone)) {
-                    updated_person.getPhones().put(request.getParameter(ID), updatable_phone);
-                    this.phonebook.updatePerson(request.getParameter(OWNER_ID), updated_person);
-                    jsp_parameters.put(CURRENT_ACTION_RESULT, "UPDATE_SUCCESS");
-                    jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Обновление выполнено успешно");
+                if (this.phones.updatePhone(id, updatablePhone)) {
+                    updatedPerson.getPhones().put(request.getParameter(ID), updatablePhone);
+                    this.phonebook.updatePerson(request.getParameter(OWNER_ID), updatedPerson);
+                    jspParameters.put(CURRENT_ACTION_RESULT, "UPDATE_SUCCESS");
+                    jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Обновление выполнено успешно");
                 }
                 // Если запись НЕ удалось обновить...
                 else {
-                    jsp_parameters.put(CURRENT_ACTION_RESULT, "UPDATE_FAILURE");
-                    jsp_parameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка обновления");
+                    jspParameters.put(CURRENT_ACTION_RESULT, "UPDATE_FAILURE");
+                    jspParameters.put(CURRENT_ACTION_RESULT_LABEL, "Ошибка обновления");
                 }
 
                 // Установка параметров JSP.
-                request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+                request.setAttribute(JSP_PARAMETERS, jspParameters);
 
                 // Передача запроса в JSP.
-                dispatcher_for_list.forward(request, response);
+                dispatcherForList.forward(request, response);
             }
             // Если в данных были ошибки, надо заново показать форму и сообщить об ошибках.
             else {
 
                 // Подготовка параметров для JSP.
-                jsp_parameters.put(CURRENT_ACTION, EDIT_PHONE);
-                jsp_parameters.put(NEXT_ACTION, EDIT_GO_PHONE);
-                jsp_parameters.put(NEXT_ACTION_LABEL, "Сохранить");
-                jsp_parameters.put(ERROR_MESSAGE, error_message);
+                jspParameters.put(CURRENT_ACTION, EDIT_PHONE);
+                jspParameters.put(NEXT_ACTION, EDIT_GO_PHONE);
+                jspParameters.put(NEXT_ACTION_LABEL, "Сохранить");
+                jspParameters.put(ERROR_MESSAGE, errorMessage);
 
                 // Установка параметров JSP.
-                request.setAttribute("phone", updatable_phone);
-                request.setAttribute(JSP_PARAMETERS, jsp_parameters);
+                request.setAttribute("phone", updatablePhone);
+                request.setAttribute("person", updatedPerson);
+                request.setAttribute(JSP_PARAMETERS, jspParameters);
 
                 // Передача запроса в JSP.
-                dispatcher_for_list.forward(request, response);
+                dispatcherForEditPhone.forward(request, response);
 
             }
         }

@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <%@ page import="app.Person"%>
-<%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.HashMap"%>
 <%@ page import="app.Phone" %>
-<%@ page import="app.Phonebook" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="static app.ManagePersonServlet.JSP_PARAMETERS" %>
+<%@ page import="static app.ManagePersonServlet.ERROR_MESSAGE" %>
+<%@ page import="static app.ManagePersonServlet.NEXT_ACTION" %>
+<%@ page import="static app.ManagePersonServlet.*" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<style>
+    TABLE.a {
+        border-collapse: collapse;
+        padding: 5px; /* Поля вокруг содержимого таблицы */
+        border: 1px solid black; /* Параметры рамки */
+    }
+    body {
+        background-color: lightgray ;
+    }
+</style>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Управление данными о человеке</title>
 </head>
-<body>
+<body link="black" alink="black" vlink="black">
 
 <%
-	HashMap<String,String> jsp_parameters = new HashMap<>();
+	HashMap<String,String> jspParameters = new HashMap<>();
 	Phone phone = new Phone();
-	String error_message;
+	String errorMessage;
 
-	if (request.getAttribute("jsp_parameters") != null)
+	if (request.getAttribute(JSP_PARAMETERS) != null)
 	{
-		jsp_parameters = (HashMap<String,String>)request.getAttribute("jsp_parameters");
+		jspParameters = (HashMap<String,String>)request.getAttribute(JSP_PARAMETERS);
 	}
 
 	if (request.getAttribute("phone") != null)
@@ -28,22 +40,21 @@
 		phone = (Phone)request.getAttribute("phone");
 	}
 
-    Phonebook phonebook = Phonebook.getInstance();
     Person person = (Person)request.getAttribute("person");
 	
-	error_message = jsp_parameters.get("error_message");
+	errorMessage = jspParameters.get(ERROR_MESSAGE);
 %>
 
 <form action="<%=request.getContextPath()%>/" method="post">
 <input type="hidden" name="id" value="<%=phone.getId()%>"/>
 <input type="hidden" name="ownerID" value="<%=person.getId()%>"/>
-<table align="center" border="1" width="70%">
+<table align="center" border="1" width="70%" bgcolor="#bfc9dc" cellpadding="6" class="a">
     <%
-    if ((error_message != null)&&(!error_message.equals("")))
+    if ((errorMessage != null)&&(!errorMessage.equals("")))
     {
     %>
     <tr>
-     	<td colspan="2" align="center"><span style="color:red"><%=error_message%></span></td>
+     	<td colspan="2" align="center"><span style="color:red"><%=errorMessage%></span></td>
     </tr>
     <%
     }
@@ -53,15 +64,17 @@
     </tr>
     <tr>
         <td>Телефон:</td>
-        <td><input type="text" name="number" value="<%
-                 out.write(phone.getNumber());
-         %>"/>
+        <td><label>
+            <input type="text" name="number" value="<%
+                     out.write(phone.getNumber());
+             %>"/>
+        </label>
         </td>
     </tr>
     <tr>
         <td colspan="2" align="center">
-         <input type="submit" name="<%=jsp_parameters.get("next_action")%>" value="<%=jsp_parameters.get("next_action_label")%>" />
-         <br /><a href="/">Вернуться к списку</a>
+         <input type="submit" name="<%=jspParameters.get(NEXT_ACTION)%>" value="<%=jspParameters.get(NEXT_ACTION_LABEL)%>" />
+         <br /><a href="${pageContext.request.contextPath}/">Вернуться к списку</a>
         </td>
     </tr> 
  </table>

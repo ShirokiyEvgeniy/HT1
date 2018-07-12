@@ -31,9 +31,9 @@ public class Phones {
 
     // При создании экземпляра класса из БД извлекаются все записи.
     protected Phones() throws SQLException {
-        ResultSet db_data = this.db.getDBData("SELECT * FROM `phone` ORDER BY `id`");
-        while (db_data.next()) {
-            this.phones.put(db_data.getString("id"), new Phone(db_data.getString("id"), db_data.getString("owner"), db_data.getString("number")));
+        ResultSet dbData = this.db.getDBData("SELECT * FROM `phone` ORDER BY `id`");
+        while (dbData.next()) {
+            this.phones.put(dbData.getString("id"), new Phone(dbData.getString("id"), dbData.getString("owner"), dbData.getString("number")));
         }
     }
 
@@ -45,10 +45,10 @@ public class Phones {
         query = "INSERT INTO `phone` (`owner`, `number`) VALUES ('" + phone.getOwner() + "', '" + phone.getNumber() + "')";
 
 
-        Integer affected_rows = this.db.changeDBData(query);
+        Integer affectedRows = this.db.changeDBData(query);
 
         // Если добавление прошло успешно...
-        if (affected_rows > 0) {
+        if (affectedRows > 0) {
             phone.setId(this.db.getLastInsertId().toString());
 
             // Добавляем запись о человеке в общий список.
@@ -64,15 +64,15 @@ public class Phones {
     // Обновление записи о человеке.
     public boolean updatePhone(String id, Phone phone) {
 
-        Integer id_filtered = Integer.parseInt(phone.getId());
+        Integer idFiltered = Integer.parseInt(phone.getId());
         String query;
 
-        query = "UPDATE `phone` SET `owner` = '" + phone.getOwner() + "', `number` = '" + phone.getNumber() + "' WHERE `id` = " + id_filtered;
+        query = "UPDATE `phone` SET `owner` = '" + phone.getOwner() + "', `number` = '" + phone.getNumber() + "' WHERE `id` = " + idFiltered;
 
-        Integer affected_rows = this.db.changeDBData(query);
+        Integer affectedRows = this.db.changeDBData(query);
 
         // Если обновление прошло успешно...
-        if (affected_rows > 0) {
+        if (affectedRows > 0) {
             // Обновляем запись о человеке в общем списке.
             this.phones.put(phone.getId(), phone);
             return true;
@@ -85,12 +85,12 @@ public class Phones {
     // Удаление записи о человеке.
     public boolean deletePhone(String id) {
         if ((id != null) && (!id.equals("null"))) {
-            int filtered_id = Integer.parseInt(id);
+            int filteredId = Integer.parseInt(id);
 
-            Integer affected_rows = this.db.changeDBData("DELETE FROM `phone` WHERE `id`=" + filtered_id);
+            Integer affectedRows = this.db.changeDBData("DELETE FROM `phone` WHERE `id`=" + filteredId);
 
             // Если удаление прошло успешно...
-            if (affected_rows > 0) {
+            if (affectedRows > 0) {
                 // Удаляем запись о человеке из общего списка.
                 this.phones.remove(id);
                 return true;

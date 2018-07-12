@@ -40,6 +40,10 @@ public class Phone {
         this.number = "";
     }
 
+    public boolean validateNumber(String number) {
+        return number.matches("[+#]?[\\d\\-]{2,50}");
+    }
+
     // ++++++++++++++++++++++++++++++++++++++
     // Геттеры и сеттеры
     public String getId() {
