@@ -11,7 +11,7 @@ import util.DBWorker;
 
 public class Phones {
 
-    // Хранилище записей о людях.
+    // Хранилище записей о телефонах.
     private HashMap<String, Phone> phones = new HashMap<>();
 
     // Объект для работы с БД.
@@ -37,13 +37,11 @@ public class Phones {
         }
     }
 
-    // Добавление записи о человеке.
+    // Добавление записи о телефоне.
     public String addPhone(Phone phone) {
         String query;
-        // У человека может не быть отчества.
 
         query = "INSERT INTO `phone` (`owner`, `number`) VALUES ('" + phone.getOwner() + "', '" + phone.getNumber() + "')";
-
 
         Integer affectedRows = this.db.changeDBData(query);
 
@@ -51,9 +49,10 @@ public class Phones {
         if (affectedRows > 0) {
             phone.setId(this.db.getLastInsertId().toString());
 
-            // Добавляем запись о человеке в общий список.
+            // Добавляем запись о телефоне в общий список.
             this.phones.put(phone.getId(), phone);
 
+            // Возвращаем id телефона для корректного добавления в список теьефонов человека
             return phone.getId();
         } else {
             return "0";
@@ -61,7 +60,7 @@ public class Phones {
     }
 
 
-    // Обновление записи о человеке.
+    // Обновление записи о телефоне.
     public boolean updatePhone(String id, Phone phone) {
 
         Integer idFiltered = Integer.parseInt(phone.getId());
@@ -73,7 +72,7 @@ public class Phones {
 
         // Если обновление прошло успешно...
         if (affectedRows > 0) {
-            // Обновляем запись о человеке в общем списке.
+            // Обновляем запись о телефоне в общем списке.
             this.phones.put(phone.getId(), phone);
             return true;
         } else {
@@ -82,7 +81,7 @@ public class Phones {
     }
 
 
-    // Удаление записи о человеке.
+    // Удаление записи о телефоне.
     public boolean deletePhone(String id) {
         if ((id != null) && (!id.equals("null"))) {
             int filteredId = Integer.parseInt(id);
@@ -91,7 +90,7 @@ public class Phones {
 
             // Если удаление прошло успешно...
             if (affectedRows > 0) {
-                // Удаляем запись о человеке из общего списка.
+                // Удаляем запись о телефоне из общего списка.
                 this.phones.remove(id);
                 return true;
             } else {

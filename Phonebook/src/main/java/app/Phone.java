@@ -11,7 +11,7 @@ import util.DBWorker;
 
 public class Phone {
 
-    // Данные записи о человеке.
+    // Данные записи о телефоне.
     private String id;
     private String owner;
     private String number;
@@ -40,6 +40,7 @@ public class Phone {
         this.number = "";
     }
 
+    // Метод валидации телефона
     public boolean validateNumber(String number) {
         return number.matches("[+#]?[\\d\\-]{2,50}");
     }

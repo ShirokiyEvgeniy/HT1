@@ -14,6 +14,7 @@ public class ManagePersonServlet extends HttpServlet {
 
     // Идентификатор для сериализации/десериализации.
 	private static final long serialVersionUID = 1L;
+	// Строчные константы
     public static final String ENCODING = "UTF-8";
     public static final String ACTION = "action";
     public static final String ID = "id";
@@ -77,6 +78,7 @@ public class ManagePersonServlet extends HttpServlet {
 		return errorMessage;
 	}
 
+    // Валидация номера телефона и генерация сообщения об ошибке в случае невалидных данных.
 	private String validatePhone(Phone phone) {
 	    String errorMessage = "";
 
@@ -110,6 +112,7 @@ public class ManagePersonServlet extends HttpServlet {
 		// Действие (action) и идентификатор записи (id) над которой выполняется это действие.
 		String action = request.getParameter(ACTION);
 		String id = request.getParameter(ID);
+		// ID владельца конкретного телефона
 		String ownerID = request.getParameter(OWNER_ID);
 
 		// Если идентификатор и действие не указаны, мы находимся в состоянии
@@ -178,8 +181,9 @@ public class ManagePersonServlet extends HttpServlet {
 					dispatcherForList.forward(request, response);
 					break;
                 case ADD_PHONE:
-                    // Создание новой пустой записи о пользователе.
+                    // Создание новой пустой записи о телефоне.
                     Phone emptyPhone = new Phone();
+                    // Обладатель телефона
                     Person updatedPerson = this.phonebook.getPerson(ownerID);
 
                     // Подготовка параметров для JSP.
@@ -264,7 +268,7 @@ public class ManagePersonServlet extends HttpServlet {
 		RequestDispatcher dispatcherForEditPhone = request.getRequestDispatcher(EDIT_PHONE_JSP);
 
 
-		// Действие (add_go, edit_go) и идентификатор записи (id) над которой выполняется это действие.
+		// Действие (addGo, editGo, addPhoneGo, editPhoneGo) и идентификатор записи (id) над которой выполняется это действие.
 		String addGo = request.getParameter(ADD_GO_PERSON);
 		String editGo = request.getParameter(EDIT_GO_PERSON);
         String addPhoneGo = request.getParameter(ADD__GO_PHONE);
@@ -371,7 +375,7 @@ public class ManagePersonServlet extends HttpServlet {
             Phone newPhone = new Phone(request.getParameter(ID), request.getParameter(OWNER_ID), request.getParameter("number"));
             Person updatedPerson = this.phonebook.getPerson(request.getParameter(OWNER_ID));
 
-            // Валидация ФИО.
+            // Валидация телефона.
             String errorMessage = this.validatePhone(newPhone);
 
             // Если данные верные, можно производить добавление.
@@ -421,7 +425,7 @@ public class ManagePersonServlet extends HttpServlet {
             Phone updatablePhone = this.phones.getPhone(request.getParameter(ID));
             Person updatedPerson = this.phonebook.getPerson(request.getParameter(OWNER_ID));
 
-            // Валидация ФИО.
+            // Валидация телефона.
             String errorMessage = validatePhone(new Phone("0", "0", request.getParameter("number")));
 
             // Если данные верные, можно производить добавление.
